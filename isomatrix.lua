@@ -111,36 +111,47 @@ function isomatrix:draw()
       ]]--
     end
   end
-
-
-      -- Draw marker on selected tile
-      local nx, ny = isomatrix:get2dFromTileCoordinates(self.selection.col, self.selection.row)
-      nx1, ny1 = isomatrix:twoDToIso(nx, ny)
-      nx2, ny2 = isomatrix:twoDToIso(nx + self.tile.width, ny)
-      nx3, ny3 = isomatrix:twoDToIso(nx, ny + self.tile.height)
-      nx4, ny4 = isomatrix:twoDToIso(nx + self.tile.width, ny + self.tile.height)
-      
-      love.graphics.setColor(0,0,0,255)
-      love.graphics.circle("fill", nx1, ny1, 5, 10)
-      love.graphics.setColor(255,0,0,255)
-      love.graphics.circle("fill", nx1, ny1, 3, 10)
-
-      love.graphics.setColor(0,0,0,255)
-      love.graphics.circle("fill", nx2, ny2, 5, 10)
-      love.graphics.setColor(255,0,0,255)
-      love.graphics.circle("fill", nx2, ny2, 3, 10)
-      
-      love.graphics.setColor(0,0,0,255)
-      love.graphics.circle("fill", nx3, ny3, 5, 10)
-      love.graphics.setColor(255,0,0,255)
-      love.graphics.circle("fill", nx3, ny3, 3, 10)
-      
-      love.graphics.setColor(0,0,0,255)
-      love.graphics.circle("fill", nx4, ny4, 5, 10)
-      love.graphics.setColor(255,0,0,255)
-      love.graphics.circle("fill", nx4, ny4, 3, 10)
-      
+  
+  isomatrix:draw_tilemarker(self.selection.col, self.selection.row)
 end  
+
+function isomatrix:draw_tilemarker(col, row)
+  
+  -- Draw marker on selected tile
+  local nx, ny = isomatrix:get2dFromTileCoordinates(col, row)
+  nx1, ny1 = isomatrix:twoDToIso(nx, ny)
+  nx2, ny2 = isomatrix:twoDToIso(nx + self.tile.width, ny)
+  nx3, ny3 = isomatrix:twoDToIso(nx, ny + self.tile.height)
+  nx4, ny4 = isomatrix:twoDToIso(nx + self.tile.width, ny + self.tile.height)
+
+  -- Draw Image position Debuger
+  local ix, iy = math.floor(nx3 + 0.5), math.floor(ny1 + 0.5)
+  local iw, ih = math.floor(nx2 - nx3 + 0.5), math.floor(ny4 - ny1 + 0.5)
+  
+  love.graphics.setColor(255,255,255,100)
+  love.graphics.rectangle("line", ix, iy, iw, ih)
+  
+  -- Draw markers
+  love.graphics.setColor(0,0,0,255)
+  love.graphics.circle("fill", nx1, ny1, 5, 10)
+  love.graphics.setColor(255,0,0,255)
+  love.graphics.circle("fill", nx1, ny1, 3, 10)
+
+  love.graphics.setColor(0,0,0,255)
+  love.graphics.circle("fill", nx2, ny2, 5, 10)
+  love.graphics.setColor(255,0,0,255)
+  love.graphics.circle("fill", nx2, ny2, 3, 10)
+  
+  love.graphics.setColor(0,0,0,255)
+  love.graphics.circle("fill", nx3, ny3, 5, 10)
+  love.graphics.setColor(255,0,0,255)
+  love.graphics.circle("fill", nx3, ny3, 3, 10)
+  
+  love.graphics.setColor(0,0,0,255)
+  love.graphics.circle("fill", nx4, ny4, 5, 10)
+  love.graphics.setColor(255,0,0,255)
+  love.graphics.circle("fill", nx4, ny4, 3, 10)
+end
 
 function isomatrix:keypressed( key, scancode, isrepeat)
   
@@ -165,12 +176,12 @@ function isomatrix:keypressed( key, scancode, isrepeat)
     end
 
   if key == "e" then
-       self.tile.width = self.tile.width + 1
-        self.tile.height = self.tile.width
+      self.tile.width = self.tile.width + 1
+      self.tile.height = self.tile.width
     end
     if key == "q" then
-           self.tile.width = self.tile.width - 1
-        self.tile.height = self.tile.width
+      self.tile.width = self.tile.width - 1
+      self.tile.height = self.tile.width
     end
   
   else
@@ -217,8 +228,21 @@ function isomatrix:mousemoved(x, y, dx, dy, istouch)
   x, y = isomatrix:isoTo2D(x, y)
   self.selection.col, self.selection.row = isomatrix:getTileCoordinates(x, y)
   
-  print("select tile: col="..self.selection.col.. " row="..self.selection.row)
+  print("select tile: col="..self.selection.col.. " row="..self.selection.row)  
   
+  -- calculate coordinates and image size to current selected tile
+  -- calculate bounds
+  local nx, ny = isomatrix:get2dFromTileCoordinates(self.selection.col, self.selection.row)
+  nx1, ny1 = isomatrix:twoDToIso(nx, ny)
+  nx2, ny2 = isomatrix:twoDToIso(nx + self.tile.width, ny)
+  nx3, ny3 = isomatrix:twoDToIso(nx, ny + self.tile.height)
+  nx4, ny4 = isomatrix:twoDToIso(nx + self.tile.width, ny + self.tile.height)
+
+  -- calculate image position and size
+  local ix, iy = math.floor(nx3 + 0.5), math.floor(ny1 + 0.5)
+  local iw, ih = math.floor(nx2 - nx3 + 0.5), math.floor(ny4 - ny1 + 0.5)
+  
+  print("image tile: x="..ix.. " y="..iy.." w="..iw.. " h="..ih)  
 end
 
 return isomatrix
